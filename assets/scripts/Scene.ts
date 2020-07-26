@@ -16,9 +16,9 @@ export default class Scene extends cc.Component {
     box: cc.Node = null;
     init() {
         this.ground = this.node.getChildByName("ground");
-        // this.box = this.node.getChildByName("box");
+        this.box = this.node.getChildByName("box");
         Collision.on(CollisType.quiet, this.ground, this.collisground, this);
-        // Collision.on(CollisType.quiet, this.box, this.collisbox, this);
+        Collision.on(CollisType.quiet, this.box, this.collisbox, this);
     }
     collisground(data: any) {
         console.log("scene-ground collision");

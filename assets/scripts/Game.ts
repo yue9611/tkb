@@ -29,7 +29,6 @@ export default class Game extends cc.Component {
     }
     update(dt) {
         this.level.updateStep(dt);
-        Collision.update(dt);
     }
     keyDown(e: cc.Event.EventKeyboard) {
         this.level.keyDown(e);

@@ -1,5 +1,5 @@
 import Collision from "./Collision";
-import { CollisType } from "./Enum";
+import { CollisType, SportState } from "./Enum";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,6 +20,11 @@ export default class Player extends cc.Component {
         _nowYSpeed: 0,
         _a: 320,
     }
+    lastJumpData = {
+        _dv: 0,
+        _dy: 0,
+    }
+    sportEvent = [];
     init() {
         this.node.setPosition(cc.v3(0, 100, 0));
         this.resetNV();
@@ -27,6 +32,7 @@ export default class Player extends cc.Component {
     }
     updateStep(dt) {
         this.resetNV();
+        this.sportEvent = [];
         this.sport(dt);
     }
     resetNV() {
@@ -35,16 +41,19 @@ export default class Player extends cc.Component {
     collis(data: any) {
         // console.log(data);
         console.log("player collising");
+        this.eventManage();
     }
     sport(dt) {
         //前后运动
         switch (this.runing) {
             case SportState.goAhead: {
                 this.goAhead();
+                this.sportEvent.push(SportState.goAhead);
                 break;
             }
             case SportState.goBack: {
                 this.goBack();
+                this.sportEvent.push(SportState.goBack);
                 break;
             }
             default: {
@@ -55,10 +64,12 @@ export default class Player extends cc.Component {
         switch (this.rotateing) {
             case SportState.leftRotate: {
                 this.turnToL();
+                this.sportEvent.push(SportState.leftRotate);
                 break;
             }
             case SportState.rightRotate: {
                 this.turnToR();
+                this.sportEvent.push(SportState.rightRotate);
                 break;
             }
             default: {
@@ -81,24 +92,34 @@ export default class Player extends cc.Component {
     jump(dt) {
         if (this.leap == SportState.jump) {
             this.leap = SportState.stop;
-            if (this.jumpData._canJump) {
-                this.jumpData._nowYSpeed = this.jumpData._jumpSpeed;
-                this.jumpData._jumping = true;
-            }
+            this.jumpData._nowYSpeed = this.jumpData._jumpSpeed;
         }
-        if (this.jumpData._jumping) {
-            this.node.y += this.jumpData._nowYSpeed * dt;
-            this.jumpData._nowYSpeed -= this.jumpData._a * dt;
-        }
-        if (this.node.y <= 0) {
-            this.jumpData._canJump = true;
-            this.node.y = 0;
-            this.jumpData._nowYSpeed = 0;
-            this.jumpData._jumping = false;
-        } else {
-            this.jumpData._canJump = false;
-            this.jumpData._jumping = true;
-        }
+        this.lastJumpData._dy = this.jumpData._nowYSpeed * dt;
+        this.node.y += this.lastJumpData._dy;
+        this.lastJumpData._dv = -this.jumpData._a * dt;
+        this.jumpData._nowYSpeed += this.lastJumpData._dv;
+
+
+        // if (this.leap == SportState.jump) {
+        //     this.leap = SportState.stop;
+        //     if (this.jumpData._canJump) {
+        //         this.jumpData._nowYSpeed = this.jumpData._jumpSpeed;
+        //         this.jumpData._jumping = true;
+        //     }
+        // }
+        // if (this.jumpData._jumping) {
+        //     this.node.y += this.jumpData._nowYSpeed * dt;
+        //     this.jumpData._nowYSpeed -= this.jumpData._a * dt;
+        // }
+        // if (this.node.y <= 0) {
+        //     this.jumpData._canJump = true;
+        //     this.node.y = 0;
+        //     this.jumpData._nowYSpeed = 0;
+        //     this.jumpData._jumping = false;
+        // } else {
+        //     this.jumpData._canJump = false;
+        //     this.jumpData._jumping = true;
+        // }
     }
     //左转
     turnToL() {
@@ -107,6 +128,34 @@ export default class Player extends cc.Component {
     //右转
     turnToR() {
         this.node.eulerAngles = cc.v3(0, this.node.eulerAngles.y - this.speedR, 0);
+    }
+    eventManage() {
+        while (this.sportEvent.length > 0) {
+            let event = this.sportEvent.pop();
+            switch (event) {
+                case SportState.goBack: {
+                    this.goAhead();
+                    break;
+                }
+                case SportState.goAhead: {
+                    this.goBack();
+                    break;
+                }
+                case SportState.rightRotate: {
+                    this.turnToL();
+                    break;
+                }
+                case SportState.leftRotate: {
+                    this.turnToR();
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        this.jumpData._nowYSpeed = 0;
+        this.node.y -= this.lastJumpData._dy;
     }
     angleToRad(angle: number): number {
         if (angle != null) {
@@ -143,12 +192,4 @@ export default class Player extends cc.Component {
         return cc.v2(v.x, -v.y);
     }
 }
-export enum SportState {
-    "begin" = 0,
-    "stop",
-    "goAhead",
-    "goBack",
-    "leftRotate",
-    "rightRotate",
-    "jump",
-}
+

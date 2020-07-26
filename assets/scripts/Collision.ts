@@ -116,7 +116,8 @@ export default class Collision {
     static eventManage() {
         while (this.collisEvent.length > 0) {
             let event = this.collisEvent.pop();
-            console.log(event);
+            event.one.func.call(event.one.tag);
+            event.two.func.call(event.two.tag);
         }
     }
 
@@ -137,7 +138,6 @@ export default class Collision {
                         dotIndex: i,
                     }
                     this.eventOn(data);
-                    one.func.call(one.tag, data);
                 }
             }
             for (let i = 0; i < lengt; i++) {
@@ -149,7 +149,6 @@ export default class Collision {
                         dotIndex: i,
                     }
                     this.eventOn(data);
-                    two.func.call(two.tag, data);
                 }
             }
         }

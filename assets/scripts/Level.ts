@@ -6,8 +6,9 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import Scene from "./Scene";
-import Player, { SportState } from "./Player";
-import Collision, { Dot } from "./Collision";
+import Player from "./Player";
+import Collision from "./Collision";
+import { SportState } from "./Enum";
 
 const { ccclass, property } = cc._decorator;
 
@@ -23,8 +24,8 @@ export default class Level extends cc.Component {
     }
 
     updateStep(dt) {
-        this.collision();
         this.player.updateStep(dt);
+        Collision.update(dt);
     }
     keyDown(e: cc.Event.EventKeyboard) {
         switch (e.keyCode) {
