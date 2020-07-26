@@ -1,4 +1,5 @@
-import Collision, { CollisType } from "./Collision";
+import Collision from "./Collision";
+import { CollisType } from "./Enum";
 
 const { ccclass, property } = cc._decorator;
 

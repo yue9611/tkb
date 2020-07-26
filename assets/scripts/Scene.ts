@@ -5,7 +5,8 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Collision, { CollisType } from "./Collision";
+import Collision from "./Collision";
+import { CollisType } from "./Enum";
 
 const { ccclass, property } = cc._decorator;
 

@@ -5,11 +5,9 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-export enum CollisType {
-    "begin" = 10,
-    "quiet",
-    "mobile",
-}
+import { CollisType } from "./Enum";
+
+
 class DataCollis {
     y: number[] = [0, 0];
     //x-z坐标系点
