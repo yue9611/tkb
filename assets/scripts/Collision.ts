@@ -33,9 +33,6 @@ class DataCollis {
     }
 }
 
-const { ccclass, property } = cc._decorator;
-
-@ccclass
 export default class Collision {
     private static motionlessBox: DataCollis[] = [];
     private static motionBox: DataCollis[] = [];
